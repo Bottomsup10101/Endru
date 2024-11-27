@@ -1,0 +1,103 @@
+/*
+ 6 Write a C++ program to store a matrix of given order(Max 10 and Min 5) 
+   and arrange the elements of each column in ascending order using selection sort.
+*/
+#include <iostream>
+using namespace std;
+
+// Selection sort algorithm
+void Ssort(int arr[], int n)
+{
+   int min, pos;
+   for(int i = 0; i < n - 1; i++) // Outer loop
+   {
+      min = arr[i];
+      pos = i; 
+      for(int j = i + 1; j < n; j++) // Inner loop
+      {
+          if(arr[j] < min)
+          {
+              min = arr[j];
+              pos = j;
+          }
+      }
+      // Swap the found minimum element with the current element
+      arr[pos] = arr[i];
+      arr[i] = min;
+   }
+}
+
+// Selection sort applied on each column of the matrix
+void MSsort(int arr[][10], int row, int col)
+{
+    int columnArr[row]; // Array for copying elements of specified column
+    for(int i = 0; i < col; i++) // Column specification
+    {
+        for(int j = 0; j < row; j++) // Iterating over each row for the column
+        {
+            columnArr[j] = arr[j][i]; // Copying elements of the column into 1D array
+        }
+        Ssort(columnArr, row); // Selection sorting of that particular column
+     
+        // Copying sorted array back into the matrix column
+        for(int crow = 0; crow < row; crow++)
+        {
+            arr[crow][i] = columnArr[crow]; // Copying sorted column back into the matrix
+        }
+    }
+}
+
+int main() 
+{
+    int mat[10][10];
+    int irow, icol;
+    
+    cout << "\nEnter the number of rows and columns:\n";
+    cout << "Number of Rows: ";
+    cin >> irow;
+    cout << "Number of Columns: ";
+    cin >> icol;
+    
+    // Verification of allowed matrix
+    if((irow * icol < 25) || (irow * icol > 100))
+    {
+        cout << "\nThe product of rows and columns should range from 25 elements to 100 elements.";
+        cout << "\nExiting the program.....";
+        return 0;
+    }
+    
+    // Taking input of matrix from user
+    cout << "\nEnter the elements of the matrix:\n";
+    for(int row = 0; row < irow; row++)
+    {
+        for(int col = 0; col < icol; col++)
+        {
+            cout << "\nEnter the data at (" << row << "," << col << ") location in the matrix: ";
+            cin >> mat[row][col];
+        }
+        cout << endl;
+    }
+    
+    // Displaying input matrix
+    cout << "\nThe input matrix is provided below:\n\n";
+    for(int row = 0; row < irow; row++)
+    {
+        for(int col = 0; col < icol; col++)
+        {
+            cout << mat[row][col] << "\t";
+        }
+        cout << endl;
+    }
+    
+    // Sorting each column of the matrix
+    MSsort(mat, irow, icol);
+    cout << "\nThe matrix sorted by column using selection sort is provided below:\n\n";
+    for(int row = 0; row < irow; row++)
+    {
+        for(int col = 0; col < icol; col++)
+        {
+            cout << mat[row][col] << "\t";
+        }
+        cout << endl;
+    }
+}
