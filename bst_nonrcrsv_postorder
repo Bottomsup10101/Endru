@@ -4,158 +4,117 @@
 */
 #include <iostream>
 using namespace std;
-const int size=100;
-struct node
-{
+
+const int siz = 100;
+
+struct node {
     int data;
-    node*left,*right;
-    int flag;//for checking whether the node was visited or not if visited fag should be 1 not visited flag should be zero
+    node* left;
+    node* right;
 };
 
-//stack data structure used for storing and manipulation through address of each node
-class stack
-{
-    node*arr[size];//array storing address of each node
+class BST {
+    node* root;
+
+public:
+    BST(){root=NULL;}
+    
+    void create_BST();
+    void nr_pre() { nr_pre(root); }
+private:
+    void nr_pre(node* t);
+};
+
+class stack {
+    node* a[siz];
     int top;
-    public:
+
+public:
     stack(){top=-1;}
-    void push(node*t)
-    {
-        if(top!=size-1)
-        {
-            arr[++top]=t;
-        }
-    }
     
-    node* pop()
-    {
-        node*t;
-        if(top!=-1)
-        {
-            t=arr[top--];
-        }
-        return t;
+    bool empty() {
+        return top == -1;
     }
-    
-    int IsEmpty()
-    {
-        if(top==-1)
-        return 1;
-        else
-        return 0;
+
+
+
+    void push(node* t){
+        if(top!=siz-1)
+            a[++top]=t;
     }
+    node* pop() {
+    if (top != -1) 
+        return a[top--];
+     else 
+        return NULL; 
+}
+
 };
 
-class bst
-{
-    node*root;
-    public:
-    bst(){ root=NULL;}
-    
-    //declaring all function prototype
-      void create();
-      void disp();
-      void nr_post(node*temp);
-};
 
-//defining create function
-void bst::create()
-{
-    int n;
-    cout<<"\nEnter the number of nodes you want to create in BST: ";
-    cin>>n;
-    node*temp,*parent,*nn;
-    temp=NULL;parent=NULL;
-    for(int i=0;i<n;i++)
-    {
-        nn=new node;
-        if(nn==NULL)
-        {
-            cout<<"\nNo Memory left in the system....";
-            cout<<"\nExiting the program";
-            return;
+
+void BST::nr_post(node* t) {
+    stack s1, s2;
+    if (t == NULL) return;
+
+    s1.push(t);
+    while (!s1.empty()) {
+        t = s1.pop();
+        s2.push(t);
+        if (t->left != NULL) s1.push(t->left);
+        if (t->right != NULL) s1.push(t->right);
+    }
+    while (!s2.empty()) {
+        t = s2.pop();
+        cout << t->data << " ";
+    }
+}
+void BST::create_BST() {
+    int n, i;
+    cout << "Enter No. of nodes: ";
+    cin >> n;
+
+    for (i = 0; i < n; i++) {
+        node* nn = new node;
+        if (!nn) {
+            cout << "Memory full" << endl;
+            exit(1); 
         }
-        //taking data of node from user
-        cout<<"\nEnter the data for "<<i+1<<" node:";
-        cin>>nn->data;
-        nn->left=NULL;nn->right=NULL;
         
-        //creation of first node
-        if(i==0)
-        {
-            root=nn;
+        cout << "Enter data: ";
+        cin >> nn->data;
+        nn->left = nn->right = NULL;
+
+        if (root == NULL) {
+            root = nn;
             continue;
         }
-        temp=root;
-        
-        //finding correct location for new node 
-        while(temp!=NULL)
-        {
-            parent=temp;
-            if(temp->data<nn->data)
-            {
-                temp=temp->right;
-            }
-            else
-            temp=temp->left;
-        }
-        
-        //checking whether in left or right of parent node
-        if(parent->data<nn->data)
-        {
-            parent->right=nn;
-        }
-        else
-        parent->left=nn;
-        
-    }
-}
 
-//non-recurrsive preorder traversal
-void bst::nr_post(node*temp)
-{
-    stack s1;
-    // root left right
-    while(temp!=NULL)
-    {
-        temp->flag=0;
-        s1.push(temp);
-        temp=temp->left;
-        
-    }
-    
-    while(!s1.IsEmpty())
-    {
-        temp=s1.pop();
-        if(temp->flag==0)
-        {
-            temp->flag=1;
-            s1.push(temp);
-            temp=temp->right;
-            while(temp!=NULL)
-            {
-                temp->flag=0;
-                s1.push(temp);
-                temp=temp->left;
+        node* t = root;
+        node* parent = NULL;
+
+        while (t != NULL) {
+            parent = t;
+            if (nn->data < t->data) {
+                t = t->left;
+            } else {
+                t = t->right;
             }
         }
-            
-        else
-        cout<<temp->data<<" ";
+
+        if (nn->data < parent->data) {
+            parent->left = nn;
+        } else {
+            parent->right = nn;
+        }
     }
-    
+}
+int main() {
+    BST b1;
+    b1.create_BST();
+    cout << "Post-order Traversal: ";
+    b1.nr_post();
+cout<<endl;
+return 0;
 }
 
-//Display function
-void bst::disp()
-{
-   cout<<"\nThe created BST displayed using non-recurrsive postorder traversal below:\n";
-   nr_post(root);
-}
-
-int main()
-{
-   bst b;
-   b.create();
-   b.disp();
-}
