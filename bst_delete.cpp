@@ -1,125 +1,141 @@
 #include <iostream>
 using namespace std;
-
 struct Node {
     int data;
     Node* left;
     Node* right;
-    
-    Node(int data) {
-        this->data = data;
-        left = right = NULL;
-    }
 };
 
-Node* insert(Node* root, int val) {
+Node* createNode(int value) {
+    Node* newNode = new Node();
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+
+Node* insert(Node* root, int value) {
     if (root == NULL) {
-        return new Node(val);
+    return createNode(value);
     }
+    if (value < root->data) {
+        root->left = insert(root->left, value);
+    } else if (value > root->data) {
+        root->right = insert(root->right, value);
+    }
+return root;
+}
 
-    Node* curr = root;
 
-    while (true) {
-        if (val <= curr->data) {
-            if (curr->left == NULL) {
-                curr->left = new Node(val);
-                break;
-            } else {
-                curr = curr->left;
-            }
-        } else {
-            if (curr->right == NULL) {
-                curr->right = new Node(val);
-                break;
-            } else {
-                curr = curr->right;
-            }
-        }
+Node* findMin(Node* root) {
+    while (root && root->left != NULL) {
+         root = root->left;
     }
     return root;
 }
 
-Node* findLastRight(Node* root) {
-    if (root->right == NULL) {
-        return root;
-    }
-    return findLastRight(root->right);
-}
 
-Node* helper(Node* root) {
-    if (root->left == NULL) {
-        return root->right;
-    } else if (root->right == NULL) {
-        return root->left;
-    }
-
-    Node* rightChild = root->right;
-    Node* lastRight = findLastRight(root->left);
-    lastRight->right = rightChild;
-
-    return root->left;
-}
-
-Node* deleteNode(Node* root, int val) {
+Node* deleteNode(Node* root, int value) {
     if (root == NULL) {
-        return root;
+         return root;
     }
-
-    if (root->data == val) {
-        return helper(root);
-    }
-
-    Node* dummy = root;
-
-    while (root != NULL) {
-        if (root->data > val) {
-            if (root->left != NULL && root->left->data == val) {
-                root->left = helper(root->left);
-                break;
-            } else {
-                root = root->left;
-            }
-        } else {
-            if (root->right != NULL && root->right->data == val) {
-                root->right = helper(root->right);
-                break;
-            } else {
-                root = root->right;
-            }
+    if (value < root->data) {
+         root->left = deleteNode(root->left, value);
+    } else if (value > root->data) {
+         root->right = deleteNode(root->right, value);
+    } else {
+        if (root->left == NULL) {
+            Node* temp = root->right;
+            delete root;
+            return temp;
+        } else if (root->right == NULL) {
+            Node* temp = root->left;
+            delete root;
+            return temp;
         }
+        Node* temp = findMin(root->right);
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
     }
-    return dummy;
+return root;
 }
 
-// Inorder traversal
-void inorder(Node* root) {
+void preorderTraversal(Node* root) {
     if (root == NULL) {
         return;
     }
-    inorder(root->left);
     cout << root->data << " ";
-    inorder(root->right);
+    preorderTraversal(root->left);
+    preorderTraversal(root->right);
 }
 
+
+void inorderTraversal(Node* root) {
+    if (root == NULL) {
+         return;
+    }
+    inorderTraversal(root->left);
+    cout << root->data << " ";
+    inorderTraversal(root->right);
+}
+
+
+void postorderTraversal(Node* root) {
+        if (root == NULL) {
+        return;
+        }
+    postorderTraversal(root->left);
+    postorderTraversal(root->right);
+    cout << root->data << " ";
+}
+
+
 int main() {
-    Node* root = NULL;  
-
-    root = insert(root, 10);
-    root = insert(root, 5);
-    root = insert(root, 20);
-    root = insert(root, 3);
-    root = insert(root, 7);
-    root = insert(root, 15);
-
-    cout << "Inorder traversal before deletion: ";
-    inorder(root);
-    cout << endl;
-
-    root = deleteNode(root, 5); 
-
-    cout << "Inorder traversal after deletion: ";
-    inorder(root);
-    cout << endl;
-
-    return 0;
+    Node* root = NULL;
+    int choice, value;
+    do {
+    cout << "\nMenu:\n";
+    cout << "1. Insert a Node\n";
+    cout << "2. Delete a Specified Node\n";
+    cout << "3. Preorder Traversal\n";
+    cout << "4. Inorder Traversal\n";
+    cout << "5. Postorder Traversal\n";
+    cout << "6. Exit\n";
+    cout << "Enter your choice: ";
+    cin >> choice;
+    switch (choice) {
+         case 1:
+            cout << "Enter value to insert: ";
+            cin >> value;
+            root = insert(root, value);
+            break;
+         case 2:
+            cout << "Enter value to delete: ";
+            cin >> value;
+            root = deleteNode(root, value);
+            break;
+         case 3:
+            cout << "Preorder Traversal: ";
+            preorderTraversal(root);
+            cout << endl;
+            break;
+         case 4:
+            cout << "Inorder Traversal: ";
+            inorderTraversal(root);
+            cout << endl;
+            break;
+        case 5:
+            cout << "Postorder Traversal: ";
+            postorderTraversal(root);
+            cout << endl;
+            break;
+        case 6:
+            cout << "Exiting the program.\n";
+            break;
+        default:
+            cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 6);
+return 0;
 }
