@@ -1,0 +1,135 @@
+/*
+  19 Write a C++ program to create a Binary Search Tree for N nodes, and insert a given element
+*/
+
+#include <iostream>
+using namespace std;
+struct node
+{
+   int data;
+   node*left,*right;
+};
+
+class bst
+{
+    node*root;
+    public:
+    bst(){root=NULL;}
+    void create();
+    void insert(int in);
+    void disp();
+    void ino(node*root);
+};
+
+//definition of all function
+//create function
+void bst::create()
+{
+    int n,i;node *temp,*parent,*nn;
+    cout<<"\nEnter the number of node you want to create in bst: ";
+    cin>>n;
+    for(int i=0;i<n;i++)
+    {
+        nn=new node;
+        if(nn==NULL)
+        {
+        cout<<"\nNO MEMORY LEFT ";
+        return;
+        }
+        cout<<"\nEnter the data for "<<i+1<<" node:";
+        cin>>nn->data;
+        nn->left=NULL;
+        nn->right=NULL;
+        //creation of first node
+        if(root==NULL)
+        {
+            root=nn;
+            continue;
+        }
+        temp=root;
+        //traversal and creation of nodes
+        while(temp!=NULL)
+        {
+            parent=temp;
+            if(nn->data > temp->data)
+            temp=temp->right;
+            else
+            temp=temp->left;
+        }
+        if(nn->data > parent->data)
+        parent->right=nn;
+        else
+        parent->left=nn;
+    }
+    cout<<"\nTHE PRESCRIBED BST IS CREATED";
+}
+
+//insert the node;
+void bst::insert(int in)
+{
+   node*nn = new node;
+   if(nn==NULL)
+   {
+   cout<<"\nNO MEMORY ";
+   return;
+   }
+   nn->data=in;
+   nn->left=NULL;nn->right=NULL;
+   node*temp,*parent;
+   
+   //creation of first node
+        if(root==NULL)
+        {
+            root=nn;
+            cout<<"\nNODE WITH "<<in<<" AS DATA IS INSERTED AS ROOT IN THE BST";
+            return;
+        }
+        temp=root;
+        
+    //traversal and creation of nodes
+    while(temp!=NULL)
+    {
+        parent=temp;
+        if(nn->data > temp->data)
+        temp=temp->right;
+        else
+        temp=temp->left;
+    }
+        if(nn->data > parent->data)
+        parent->right=nn;
+        else
+        parent->left=nn;
+    cout<<"\nNODE WITH DATA "<<in<<" INSERTED IN THE BST";
+}
+
+//display of tree
+void bst::disp()
+{
+    cout<<"\nThe inorder traversal of bst: ";
+    ino(root);
+}
+void bst::ino(node*root)
+{
+    if(root!=NULL)
+    {
+    ino(root->left);
+    cout<<root->data<<" ";
+    ino(root->right);
+    }
+}
+
+int main()
+{
+    bst b;
+    b.create();
+    cout<<"\nThe input bst: ";
+    b.disp();
+    
+    //insertion
+    int num;
+    cout<<"\nEnter the number to be inserted: ";
+    cin>>num;
+    b.insert(num);
+    cout<<"\nThe bst after insertion: ";
+    b.disp();
+}
