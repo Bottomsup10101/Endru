@@ -1,0 +1,117 @@
+/*
+ 16. Write a C++ program to create a Binary Search Tree for N nodes, and count and display all
+     leaf nodes.
+*/
+#include <iostream>
+using namespace std;
+int LeafCount = 0;
+int LeafNode[100];
+int Lidx=0;
+
+//node
+struct node
+{
+  int data;
+  node*left,*right;
+};
+
+class BST
+{
+    node*root;
+    public:
+    BST(){root=NULL;}
+    //declaration of functions
+    void Create();
+    void DispLeaf();
+    void LeafFind(node* root);
+};
+
+//creation of BST
+void BST:: Create()
+{
+    int n;
+    cout<<"\nEnter the number of nodes you want to create in BST: ";
+    cin>>n;
+    node*temp,*nn,*parent;
+    int i;
+    for(i=0;i<n;i++)
+    {
+        nn=new node;
+        if(nn==NULL)
+        {
+            cout<<"\nNo Memory left...";
+            return;
+        }
+        
+        //create bst node
+        cout<<"\nEnter the data for "<<i+1<<" node:";
+        cin>>nn->data;
+        nn->left=NULL;
+        nn->right=NULL;
+        
+        //allocating first node
+        if(i==0)
+        {
+            root=nn;
+            continue;
+        }
+        temp=root;
+        while(temp!=NULL)
+        {
+            //getting correct location of the node
+            parent=temp;
+            if(temp->data<nn->data)
+            {
+                temp=temp->right;
+            }
+            else
+            temp=temp->left;
+        }
+        
+        //finally placing node at it correct location
+        if(parent->data<nn->data)
+        {
+            parent->right=nn;
+        }
+        else
+        parent->left=nn;
+    }
+    
+    cout<<"\nThe prescribed BST created";
+}
+
+//find leaf node
+void BST::LeafFind(node*temp)//lef ri roo (inoreder recurrsive traversal used)
+{
+    if(temp==NULL)
+    {
+        return;
+    }
+    LeafFind(temp->left);
+    if(temp->left==NULL && temp->right==NULL)
+    {
+        LeafNode[Lidx++]=temp->data;
+        LeafCount = Lidx;
+    }
+    
+    LeafFind(temp->right);
+}
+
+//display BST
+void BST::DispLeaf()
+{
+    LeafFind(root);
+    cout<<"\nThere are "<<Lidx<<" leaf nodes in BST:";
+    cout<<"\nLeaf nodes are as follows: ";
+    for(int i=0;i<Lidx;i++)
+    {
+        cout<<LeafNode[i]<<" ";
+    }
+}
+
+int main()
+{
+   BST B;
+   B.Create();
+   B.DispLeaf();
+}
