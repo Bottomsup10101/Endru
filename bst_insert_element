@@ -4,132 +4,142 @@
 
 #include <iostream>
 using namespace std;
-struct node
-{
-   int data;
-   node*left,*right;
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
 };
 
-class bst
-{
-    node*root;
-    public:
-    bst(){root=NULL;}
-    void create();
-    void insert(int in);
-    void disp();
-    void ino(node*root);
-};
+Node* createNode(int value) {
+    Node* newNode = new Node();
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
 
-//definition of all function
-//create function
-void bst::create()
-{
-    int n,i;node *temp,*parent,*nn;
-    cout<<"\nEnter the number of node you want to create in bst: ";
-    cin>>n;
-    for(int i=0;i<n;i++)
-    {
-        nn=new node;
-        if(nn==NULL)
-        {
-        cout<<"\nNO MEMORY LEFT ";
+
+Node* insert(Node* root, int value) {
+    if (root == NULL) {
+    return createNode(value);
+    }
+    if (value < root->data) {
+        root->left = insert(root->left, value);
+    } else if (value > root->data) {
+        root->right = insert(root->right, value);
+    }
+return root;
+}
+
+
+Node* findMin(Node* root) {
+    while (root && root->left != NULL) {
+         root = root->left;
+    }
+    return root;
+}
+
+
+Node* deleteNode(Node* root, int value) {
+    if (root == NULL) {
+         return root;
+    }
+    if (value < root->data) {
+         root->left = deleteNode(root->left, value);
+    } else if (value > root->data) {
+         root->right = deleteNode(root->right, value);
+    } else {
+        if (root->left == NULL) {
+            Node* temp = root->right;
+            delete root;
+            return temp;
+        } else if (root->right == NULL) {
+            Node* temp = root->left;
+            delete root;
+            return temp;
+        }
+        Node* temp = findMin(root->right);
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
+    }
+return root;
+}
+
+void preorderTraversal(Node* root) {
+    if (root == NULL) {
+        return;
+    }
+    cout << root->data << " ";
+    preorderTraversal(root->left);
+    preorderTraversal(root->right);
+}
+
+
+void inorderTraversal(Node* root) {
+    if (root == NULL) {
+         return;
+    }
+    inorderTraversal(root->left);
+    cout << root->data << " ";
+    inorderTraversal(root->right);
+}
+
+
+void postorderTraversal(Node* root) {
+        if (root == NULL) {
         return;
         }
-        cout<<"\nEnter the data for "<<i+1<<" node:";
-        cin>>nn->data;
-        nn->left=NULL;
-        nn->right=NULL;
-        //creation of first node
-        if(root==NULL)
-        {
-            root=nn;
-            continue;
-        }
-        temp=root;
-        //traversal and creation of nodes
-        while(temp!=NULL)
-        {
-            parent=temp;
-            if(nn->data > temp->data)
-            temp=temp->right;
-            else
-            temp=temp->left;
-        }
-        if(nn->data > parent->data)
-        parent->right=nn;
-        else
-        parent->left=nn;
-    }
-    cout<<"\nTHE PRESCRIBED BST IS CREATED";
+    postorderTraversal(root->left);
+    postorderTraversal(root->right);
+    cout << root->data << " ";
 }
 
-//insert the node;
-void bst::insert(int in)
-{
-   node*nn = new node;
-   if(nn==NULL)
-   {
-   cout<<"\nNO MEMORY ";
-   return;
-   }
-   nn->data=in;
-   nn->left=NULL;nn->right=NULL;
-   node*temp,*parent;
-   
-   //creation of first node
-        if(root==NULL)
-        {
-            root=nn;
-            cout<<"\nNODE WITH "<<in<<" AS DATA IS INSERTED AS ROOT IN THE BST";
-            return;
+
+int main() {
+    Node* root = NULL;
+    int choice, value;
+    do {
+    cout << "\nMenu:\n";
+    cout << "1. Insert a Node\n";
+    cout << "2. Delete a Specified Node\n";
+    cout << "3. Preorder Traversal\n";
+    cout << "4. Inorder Traversal\n";
+    cout << "5. Postorder Traversal\n";
+    cout << "6. Exit\n";
+    cout << "Enter your choice: ";
+    cin >> choice;
+    switch (choice) {
+         case 1:
+            cout << "Enter value to insert: ";
+            cin >> value;
+            root = insert(root, value);
+            break;
+         case 2:
+            cout << "Enter value to delete: ";
+            cin >> value;
+            root = deleteNode(root, value);
+            break;
+         case 3:
+            cout << "Preorder Traversal: ";
+            preorderTraversal(root);
+            cout << endl;
+            break;
+         case 4:
+            cout << "Inorder Traversal: ";
+            inorderTraversal(root);
+            cout << endl;
+            break;
+        case 5:
+            cout << "Postorder Traversal: ";
+            postorderTraversal(root);
+            cout << endl;
+            break;
+        case 6:
+            cout << "Exiting the program.\n";
+            break;
+        default:
+            cout << "Invalid choice. Please try again.\n";
         }
-        temp=root;
-        
-    //traversal and creation of nodes
-    while(temp!=NULL)
-    {
-        parent=temp;
-        if(nn->data > temp->data)
-        temp=temp->right;
-        else
-        temp=temp->left;
-    }
-        if(nn->data > parent->data)
-        parent->right=nn;
-        else
-        parent->left=nn;
-    cout<<"\nNODE WITH DATA "<<in<<" INSERTED IN THE BST";
-}
-
-//display of tree
-void bst::disp()
-{
-    cout<<"\nThe inorder traversal of bst: ";
-    ino(root);
-}
-void bst::ino(node*root)
-{
-    if(root!=NULL)
-    {
-    ino(root->left);
-    cout<<root->data<<" ";
-    ino(root->right);
-    }
-}
-
-int main()
-{
-    bst b;
-    b.create();
-    cout<<"\nThe input bst: ";
-    b.disp();
-    
-    //insertion
-    int num;
-    cout<<"\nEnter the number to be inserted: ";
-    cin>>num;
-    b.insert(num);
-    cout<<"\nThe bst after insertion: ";
-    b.disp();
+    } while (choice != 6);
+return 0;
 }
