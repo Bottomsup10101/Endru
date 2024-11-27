@@ -48,29 +48,31 @@ class Llist
         }
     }
     
-    void Bsort()
-    {
-        node*arr[100];int i=0;
-        for(node*t=head;t!=NULL;t=t->link)
-        {
-            arr[i]=t;
-            i++;
+    void Bsort() {
+        if (head == NULL || head->link == NULL) {
+            return; // Empty or single-node list is already sorted
         }
-        for (int st = 0; i < i - 1; i++) 
-        {
-        for (int j = 0; j < i - st - 1; j++) 
-        {
-            if (arr[j]->data > arr[j + 1]->data) 
-            {
-                swap(arr[j],arr[j+1]);
+
+        bool swapped;
+        node* ptr1;
+        node* lptr = NULL;
+
+        do {
+            swapped = false;
+            ptr1 = head;
+
+            while (ptr1->link != lptr) {
+                if (ptr1->data > ptr1->link->data) {
+                    // Swap data
+                    swap(ptr1->data, ptr1->link->data);
+                    swapped = true;
+                }
+                ptr1 = ptr1->link;
             }
-        }
-        }
-    cout<<"\nThe given linked list sorted using Bubble sort algorithm ";
-    for(i=0;arr[i]!=NULL;i++)
-    {
-        cout<<arr[i]->data<<" ";
-    }
+            lptr = ptr1; // Last node sorted
+        } while (swapped);
+
+        cout << "\nThe linked list has been sorted using Bubble Sort.\n";
     }
 };
 
@@ -83,4 +85,5 @@ int main()
     l.create(n);
     l.disp();
     l.Bsort();
+    l.disp();
 }
