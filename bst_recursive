@@ -1,0 +1,141 @@
+/*
+ 15 Write a C++ program to create a Binary Search Tree for N nodes, and implement recursive
+ pre-order tree traversal, in-order tree traversal and post-order tree traversal
+*/
+
+#include <iostream>
+using namespace std;
+struct node
+{
+    int data;
+    node*left,*right;
+};
+
+class bst
+{
+    node*root;
+    public:
+    bst(){root=NULL;}
+    
+   //all functions prototype
+   void create(int arr[],int N);
+   void disp();
+   void ino(node*root);
+   void pre(node*root);
+   void post(node*root);
+
+};
+
+
+//create function
+ void bst::create(int arr[],int N)
+    {
+     node *parent,*nn,*temp;
+     for(int i=0;i<N;i++)
+     {
+     nn=new node;
+     
+     if(nn==NULL)
+     {
+        cout<<"\nNo memory left....";
+        return;
+     }
+     
+        //node formulation
+         nn->data=arr[i];
+         nn->left=NULL;
+         nn->right=NULL;
+         
+         if(root==NULL)
+         {
+             root=nn;
+             continue;
+         }
+        temp=root;
+         
+        //finding appropriate location of node
+        while(temp!=NULL)
+        {
+            parent=temp;
+            if(nn->data>temp->data)
+            {
+                temp=temp->right;
+            }
+            else
+            temp=temp->left;
+        }
+        
+        //put that data at it's correct location 
+        if(nn->data > parent->data)
+        {
+            parent->right=nn;
+        }
+        else
+        parent->left=nn;
+    }
+     cout<<"\nThe specified Binary Search Tree is created ";
+    }
+
+//display function
+ void bst::disp()
+   {
+       //in-order
+       cout<<"\nRecursive inorder traversal : ";
+       ino(root);
+       
+        //pre-order
+       cout<<"\nRecursive pre-order traversal : ";
+       pre(root);
+       
+        //post-order
+       cout<<"\nRecursive post-order traversal : ";
+       post(root);
+       
+    }
+    
+//all traversal function
+void bst::ino(node*root)
+{
+    if(root!=NULL)
+    {
+    ino(root->left);
+    cout<<root->data<<" ";
+    ino(root->right);
+    }
+}
+
+void bst::pre(node*root)
+{
+    if(root!=NULL)
+    {
+    cout<<root->data<<" ";
+    pre(root->left);
+    pre(root->right);
+    }
+}
+
+void bst::post(node*root)
+{
+    if(root!=NULL)
+    {
+    post(root->left);
+    post(root->right);
+    cout<<root->data<<" ";
+    }
+}
+
+int main()
+{
+    bst b;
+    int n;
+    cout<<"\nEnter the number of nodes you want to create in bst: ";
+    cin>>n;
+    int arr[n];
+    cout<<"\nEnter the data elements of bst respectively: ";
+    for(int i=0;i<n;i++)
+    {
+        cin>>arr[i];
+    }
+    b.create(arr,n);
+    b.disp();
+}
