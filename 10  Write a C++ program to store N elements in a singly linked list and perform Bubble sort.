@@ -1,0 +1,86 @@
+/* 10  Write a C++ program to store N elements in a singly linked list and perform Bubble sort.
+*/
+
+#include <iostream>
+using namespace std;
+struct node
+{
+    int data;
+    node*link;
+};
+
+class Llist
+{
+    node*head;
+    public:
+    Llist(){head=NULL;}
+    void create(int n)
+    {
+        node *nn,*t;
+        for(int i=0;i<n;i++)
+        {
+           nn=new node;
+           if(nn==NULL)
+           {
+               cout<<"\nNo memory left...";
+               return;
+           }
+           cout<<"\nEnter the data for "<<i+1<<" node: ";
+           cin>>nn->data;
+           if(i==0)
+           {
+               head=nn;
+               t=nn;
+               continue;
+           }
+           t->link=nn;
+           t=nn;
+        }
+        cout<<"\nThe prescribed singly linked list created...";
+    }
+    
+    void disp()
+    {
+        cout<<"\nThe linked list created is given below:\n ";
+        for(node*t=head;t!=NULL;t=t->link)
+        {
+            cout<<t->data<<" ";
+        }
+    }
+    
+    void Bsort()
+    {
+        node*arr[100];int i=0;
+        for(node*t=head;t!=NULL;t=t->link)
+        {
+            arr[i]=t;
+            i++;
+        }
+        for (int st = 0; i < i - 1; i++) 
+        {
+        for (int j = 0; j < i - st - 1; j++) 
+        {
+            if (arr[j]->data > arr[j + 1]->data) 
+            {
+                swap(arr[j],arr[j+1]);
+            }
+        }
+        }
+    cout<<"\nThe given linked list sorted using Bubble sort algorithm ";
+    for(i=0;arr[i]!=NULL;i++)
+    {
+        cout<<arr[i]->data<<" ";
+    }
+    }
+};
+
+int main()
+{
+    int n;
+    cout<<"\nEnter the number of nodes you want to create in singly linked list: ";
+    cin>>n;
+    Llist l;
+    l.create(n);
+    l.disp();
+    l.Bsort();
+}
