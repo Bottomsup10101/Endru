@@ -1,0 +1,100 @@
+/*
+4 Write a C++ program to store a matrix of given order (Max 10 and Min 5) 
+  and arrange the elements of each column in ascending order using insertion sort.
+*/
+#include <iostream>
+using namespace std;
+
+// Insertion sort algorithm
+void Isort(int arr[], int n)
+{
+   int item, j;
+   for(int i = 0; i < n; i++)
+   {
+     item = arr[i];
+     j = i - 1;
+     
+     while(j >= 0 && item < arr[j])
+     {
+         arr[j + 1] = arr[j];
+         j--;
+     }
+     arr[j + 1] = item;
+   }
+}
+
+// Insertion sort applied on each column of the matrix
+void MIsort(int arr[][10], int row, int col)
+{
+    int columnArr[row]; // Array for copying elements of specified column
+    for(int i = 0; i < col; i++) // Column specification
+    {
+        for(int j = 0; j < row; j++) // Iterating over each row for the column
+        {
+            columnArr[j] = arr[j][i]; // Copying elements of the column into 1D array
+        }
+        Isort(columnArr, row); // Insertion sorting of that particular column
+     
+        // Copying sorted array back into the matrix column
+        for(int crow = 0; crow < row; crow++)
+        {
+            arr[crow][i] = columnArr[crow]; // Copying sorted column back into the matrix
+        }
+    }
+}
+
+int main() 
+{
+    int mat[10][10];
+    int irow, icol;
+    cout << "\nEnter the number of row and column:\n";
+    cout << "Number of Rows: ";
+    cin >> irow;
+    cout << "Number of Columns: ";
+    cin >> icol;
+    
+    // Verification of allowed matrix dimensions
+    if((irow * icol < 25) || (irow * icol > 100))
+    {
+        cout << "\nThe product of rows and columns should be between 25 and 100 ";
+        cout << "\nExiting the program.....";
+        return 0;
+    }
+    
+    // Taking input of the matrix from the user
+    cout << "\nEnter the elements of the matrix:\n";
+    for(int row = 0; row < irow; row++)
+    {
+        for(int col = 0; col < icol; col++)
+        {
+            cout << "\nEnter the data at (" << row << "," << col << ") location in the matrix: ";
+            cin >> mat[row][col];
+        }
+        cout << endl;
+    }
+    
+    // Displaying the input matrix
+    cout << "\nThe input matrix is provided below:\n\n";
+    for(int row = 0; row < irow; row++)
+    {
+        for(int col = 0; col < icol; col++)
+        {
+            cout << mat[row][col] << "\t";
+        }
+        cout << endl;
+    }
+    
+    // Sorting each column of the matrix
+    MIsort(mat, irow, icol);
+    
+    // Displaying the column sorted matrix
+    cout << "\nThe matrix sorted by column using insertion sort is provided below:\n\n";
+    for(int row = 0; row < irow; row++)
+    {
+        for(int col = 0; col < icol; col++)
+        {
+            cout << mat[row][col] << "\t";
+        }
+        cout << endl;
+    }
+}
