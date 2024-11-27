@@ -1,0 +1,78 @@
+/*
+  2 Write a C++ program to store a matrix of given order(Max 10 and Min 5) and arrange the
+    elements of each row in ascending order using Bubble sort.
+*/
+#include <iostream>
+using namespace std;
+void Bsort(int arr[],int n)
+{
+   for(int i=0;i<n-1;i++)
+   {
+       for(int j=0;j<n-i-1;j++)
+       {
+           if(arr[j]>arr[j+1])
+           {
+               swap(arr[j],arr[j+1]);
+           }
+       }
+   }
+}
+
+void MBsort(int arr[][10],int row,int col)
+{
+    for(int i=0;i<row;i++)
+    {
+        Bsort(arr[i],col);
+    }
+}
+int main() 
+{
+    int mat[10][10];
+    int irow,icol;
+    cout<<"\nEnter the number of row and column:\n";
+    cout<<"Number of Rows: ";
+    cin>>irow;
+    cout<<"Number of Columns: ";
+    cin>>icol;
+    
+    //verification of allowed matrix
+    if((irow*icol<25) ||(irow*icol>100))
+    {
+        cout<<"\nThe order of matrix should range from 25 elements to 100 elements ";
+        return 0;
+    }
+    //taking input of matrix from user
+     cout<<"\nEnter the element of  matrix at provided location:\n";
+    for(int row=0;row<irow;row++)
+    {
+        for(int col=0;col<icol;col++)
+        {
+            cout<<"\nEnter the data at ("<<row<<","<<col<<") location in the matrix: ";
+            cin>>mat[row][col];
+        }
+        cout<<endl;
+    }
+    
+    //displaying input matrix
+    cout<<"\nThe input matrix is provided below:\n\n ";
+    for(int row=0;row<irow;row++)
+    {
+        for(int col=0;col<icol;col++)
+        {
+            cout<<mat[row][col]<<"\t";
+        }
+        cout<<endl;
+    }
+    
+    //sorting each row of matrix
+    MBsort(mat,irow,icol);
+    cout<<"\nThe sorted matrix is provided below:\n\n ";
+    for(int row=0;row<irow;row++)
+    {
+        for(int col=0;col<icol;col++)
+        {
+            cout<<mat[row][col]<<"\t";
+        }
+        cout<<endl;
+    }
+}
