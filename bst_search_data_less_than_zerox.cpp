@@ -1,23 +1,23 @@
 #include <iostream>
 using namespace std;
 
-// Node structure for the BST
 struct Node {
     int data;
     Node* left;
     Node* right;
-
-    Node(int value) {
-        data = value;
-        left = nullptr;
-        right = nullptr;
-    }
 };
 
-// Function to insert a node into the BST
+Node* createNode(int value) {
+    Node* newNode = new Node();
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
 Node* insert(Node* root, int value) {
-    if (root == nullptr) {
-        return new Node(value);
+    if (root == NULL) {
+        return createNode(value);
     }
     if (value < root->data) {
         root->left = insert(root->left, value);
@@ -27,45 +27,127 @@ Node* insert(Node* root, int value) {
     return root;
 }
 
-// Function to list all nodes with data less than zero
-void listNodesLessThanZero(Node* root) {
-    if (root == nullptr) {
+Node* findMin(Node* root) {
+    while (root && root->left != NULL) {
+        root = root->left;
+    }
+    return root;
+}
+
+Node* deleteNode(Node* root, int value) {
+    if (root == NULL) {
+        return root;
+    }
+    if (value < root->data) {
+        root->left = deleteNode(root->left, value);
+    } else if (value > root->data) {
+        root->right = deleteNode(root->right, value);
+    } else {
+        if (root->left == NULL) {
+            Node* temp = root->right;
+            delete root;
+            return temp;
+        } else if (root->right == NULL) {
+            Node* temp = root->left;
+            delete root;
+            return temp;
+        }
+        Node* temp = findMin(root->right);
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
+    }
+    return root;
+}
+
+void searchNegative(Node* root) {
+    if (root == NULL) {
         return;
     }
-    // Traverse the left subtree
-    listNodesLessThanZero(root->left);
-
-    // Check if the current node's data is less than zero
+    searchNegative(root->left);
     if (root->data < 0) {
         cout << root->data << " ";
     }
+    searchNegative(root->right);
+}
 
-    // Traverse the right subtree
-    listNodesLessThanZero(root->right);
+void preorderTraversal(Node* root) {
+    if (root == NULL) {
+        return;
+    }
+    cout << root->data << " ";
+    preorderTraversal(root->left);
+    preorderTraversal(root->right);
+}
+
+void inorderTraversal(Node* root) {
+    if (root == NULL) {
+        return;
+    }
+    inorderTraversal(root->left);
+    cout << root->data << " ";
+    inorderTraversal(root->right);
+}
+
+void postorderTraversal(Node* root) {
+    if (root == NULL) {
+        return;
+    }
+    postorderTraversal(root->left);
+    postorderTraversal(root->right);
+    cout << root->data << " ";
 }
 
 int main() {
-    Node* root = nullptr;
-    int n;
-
-    cout << "Enter the number of nodes: ";
-    cin >> n;
-
-    if (n <= 0) {
-        cout << "Invalid number of nodes. Exiting." << endl;
-        return 1;
-    }
-
-    cout << "Enter " << n << " node values:" << endl;
-    for (int i = 0; i < n; ++i) {
-        int value;
-        cin >> value;
-        root = insert(root, value);
-    }
-
-    cout << "Nodes with data less than zero: ";
-    listNodesLessThanZero(root);
-    cout << endl;
-
+    Node* root = NULL;
+    int choice, value;
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Insert a Node\n";
+        cout << "2. Delete a Specified Node\n";
+        cout << "3. Search Data Less Than Zero\n";
+        cout << "4. Preorder Traversal\n";
+        cout << "5. Inorder Traversal\n";
+        cout << "6. Postorder Traversal\n";
+        cout << "7. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        switch (choice) {
+            case 1:
+                cout << "Enter value to insert: ";
+                cin >> value;
+                root = insert(root, value);
+                break;
+            case 2:
+                cout << "Enter value to delete: ";
+                cin >> value;
+                root = deleteNode(root, value);
+                break;
+            case 3:
+                cout << "Data less than zero: ";
+                searchNegative(root);
+                cout << endl;
+                break;
+            case 4:
+                cout << "Preorder Traversal: ";
+                preorderTraversal(root);
+                cout << endl;
+                break;
+            case 5:
+                cout << "Inorder Traversal: ";
+                inorderTraversal(root);
+                cout << endl;
+                break;
+            case 6:
+                cout << "Postorder Traversal: ";
+                postorderTraversal(root);
+                cout << endl;
+                break;
+            case 7:
+                cout << "Exiting the program.\n";
+                break;
+            default:
+                cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 7);
     return 0;
 }
