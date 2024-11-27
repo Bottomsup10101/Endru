@@ -1,0 +1,74 @@
+/*
+  21 Write a C++ program to Store N(Max 10) integers in an array and implement hash table
+     using division method , with linear probing without replacement
+*/
+#include <iostream>
+using namespace std;
+const int Table_Size = 10;
+
+//provides actual index(location) of element in the hash table
+int HashFunc(int key)
+{
+    return key%Table_Size;
+}
+
+//inserting elements in hash table
+void Insert(int Htable[],int key)
+{
+    int index = HashFunc(key);
+    if(Htable[index]!=-1)
+    {
+        while(Htable[index]!=-1)
+        {
+            index=(index + 1)%Table_Size;
+        }
+    }
+    Htable[index]=key;
+}
+
+//displaying the hash table
+void Hdisp(int Htable[])
+{
+    cout<<"\nThe Hash Table: \n";
+    for(int i = 0;i < Table_Size;i++)
+    {
+        cout<<i<<"---->"<<Htable[i];
+        cout<<endl;
+    }
+    
+}
+int main()
+{
+    //input Htable array
+    int Htable[Table_Size];
+    int i;
+    //initializing elements it indictes the slots are empty
+    for(i=0;i<Table_Size;i++)
+    {
+        Htable[i]=-1;
+    }
+    
+    //input elements 1 by one
+    int n,key;
+    cout<<"\nEnter the number of element you want to enter in hashtable: ";
+    cin>>n;
+    if(n>10)
+    {
+        cout<<"\nMax size of hashtable is 10";
+        cout<<"\nRun the program again...";
+        cout<<"\nExiting the program...";
+        return 0;
+    }
+    cout<<"\nEnter the input elements:\n";
+    for(i=0;i<n;i++)
+    {
+        cout<<"Enter the "<<i+1<<" element: ";
+        cin>>key;
+        Insert(Htable,key);
+        
+    }
+    
+    //displaying hash Htable
+    Hdisp(Htable);
+    return 0;
+}
