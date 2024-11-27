@@ -4,114 +4,122 @@
 */
 #include <iostream>
 using namespace std;
-int LeafCount = 0;
-int LeafNode[100];
-int Lidx=0;
 
-//node
-struct node
-{
-  int data;
-  node*left,*right;
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
 };
 
-class BST
-{
-    node*root;
-    public:
-    BST(){root=NULL;}
-    //declaration of functions
-    void Create();
-    void DispLeaf();
-    void LeafFind(node* root);
-};
-
-//creation of BST
-void BST:: Create()
-{
-    int n;
-    cout<<"\nEnter the number of nodes you want to create in BST: ";
-    cin>>n;
-    node*temp,*nn,*parent;
-    int i;
-    for(i=0;i<n;i++)
-    {
-        nn=new node;
-        if(nn==NULL)
-        {
-            cout<<"\nNo Memory left...";
-            return;
-        }
-        
-        //create bst node
-        cout<<"\nEnter the data for "<<i+1<<" node:";
-        cin>>nn->data;
-        nn->left=NULL;
-        nn->right=NULL;
-        
-        //allocating first node
-        if(i==0)
-        {
-            root=nn;
-            continue;
-        }
-        temp=root;
-        while(temp!=NULL)
-        {
-            //getting correct location of the node
-            parent=temp;
-            if(temp->data<nn->data)
-            {
-                temp=temp->right;
-            }
-            else
-            temp=temp->left;
-        }
-        
-        //finally placing node at it correct location
-        if(parent->data<nn->data)
-        {
-            parent->right=nn;
-        }
-        else
-        parent->left=nn;
-    }
-    
-    cout<<"\nThe prescribed BST created";
+Node* createNode(int value) {
+    Node* newNode = new Node();
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
 }
 
-//find leaf node
-void BST::LeafFind(node*temp)//lef ri roo (inoreder recurrsive traversal used)
-{
-    if(temp==NULL)
-    {
+Node* insert(Node* root, int value) {
+    if (root == NULL) {
+        return createNode(value);
+    }
+    if (value < root->data) {
+        root->left = insert(root->left, value);
+    } else if (value > root->data) {
+        root->right = insert(root->right, value);
+    }
+    return root;
+}
+
+Node* findMin(Node* root) {
+    while (root && root->left != NULL) {
+        root = root->left;
+    }
+    return root;
+}
+
+Node* deleteNode(Node* root, int value) {
+    if (root == NULL) {
+        return root;
+    }
+    if (value < root->data) {
+        root->left = deleteNode(root->left, value);
+    } else if (value > root->data) {
+        root->right = deleteNode(root->right, value);
+    } else {
+        if (root->left == NULL) {
+            Node* temp = root->right;
+            delete root;
+            return temp;
+        } else if (root->right == NULL) {
+            Node* temp = root->left;
+            delete root;
+            return temp;
+        }
+        Node* temp = findMin(root->right);
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
+    }
+    return root;
+}
+
+// Function to count the number of leaf nodes
+int countLeaves(Node* root) {
+    if (root == NULL) {
+        return 0;
+    }
+    if (root->left == NULL && root->right == NULL) {
+        return 1;
+    }
+    return countLeaves(root->left) + countLeaves(root->right);
+}
+
+// Function to display all the leaf nodes
+void displayLeaves(Node* root) {
+    if (root == NULL) {
         return;
     }
-    LeafFind(temp->left);
-    if(temp->left==NULL && temp->right==NULL)
-    {
-        LeafNode[Lidx++]=temp->data;
-        LeafCount = Lidx;
+    if (root->left == NULL && root->right == NULL) {
+        cout << root->data << " ";
+        return;
     }
-    
-    LeafFind(temp->right);
+    displayLeaves(root->left);
+    displayLeaves(root->right);
 }
 
-//display BST
-void BST::DispLeaf()
-{
-    LeafFind(root);
-    cout<<"\nThere are "<<Lidx<<" leaf nodes in BST:";
-    cout<<"\nLeaf nodes are as follows: ";
-    for(int i=0;i<Lidx;i++)
-    {
-        cout<<LeafNode[i]<<" ";
-    }
-}
-
-int main()
-{
-   BST B;
-   B.Create();
-   B.DispLeaf();
+int main() {
+    Node* root = NULL;
+    int choice, value;
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Insert a Node\n";
+        cout << "2. Delete a Specified Node\n";
+        cout << "3. Count and Display Leaf Nodes\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        switch (choice) {
+            case 1:
+                cout << "Enter value to insert: ";
+                cin >> value;
+                root = insert(root, value);
+                break;
+            case 2:
+                cout << "Enter value to delete: ";
+                cin >> value;
+                root = deleteNode(root, value);
+                break;
+            case 3:
+                cout << "Leaf nodes: ";
+                displayLeaves(root);
+                cout << "\nNumber of leaf nodes: " << countLeaves(root) << endl;
+                break;
+            case 4:
+                cout << "Exiting the program.\n";
+                break;
+            default:
+                cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 4);
+    return 0;
 }
