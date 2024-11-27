@@ -1,0 +1,66 @@
+/*
+  9 Write a C++ program to store N elements in an array and perform Shell sort.
+*/
+
+#include <iostream>
+using namespace std;
+
+//shell sort algorithm
+void Shsort(int arr[],int n)
+{
+    int temp;
+    for(int gap=n/2;gap>=1;gap=gap/2)//changing gap for each phase 
+    {
+        for(int j=gap;j<n;j++)//index valuation at right side of array
+        {
+            for(int i=j-gap;i>=0;i=i-gap)
+            {
+                if(arr[i+gap]>arr[i])
+                break;
+                else
+                {
+                    //swap the two number
+                    temp=arr[i+gap];
+                    arr[i+gap]=arr[i];
+                    arr[i]=temp;
+                    
+                }
+            }
+        }
+    }
+    cout<<"\nThe following array is sorted by performing shell sort on it ";
+}
+
+void disp(int arr[],int n)
+{
+    cout<<"\nThe array is: ";
+    for(int i=0;i<n;i++)
+    {
+        cout<<arr[i]<<" ";
+    }
+    cout<<endl;
+}
+int main()
+{
+    int n;
+    cout<<"\nEnter the number of elements you want to store in array: ";
+    cin>>n;
+    int arr[n];
+    
+    //input array
+    for(int i=0;i<n;i++)
+    {
+        cout<<"\nEnter the data for array at "<<i<<" index: ";
+        cin>>arr[i];
+    }
+    
+    //input array display
+    disp(arr,n);
+    
+    //shell sorting the provided array
+    Shsort(arr,n);
+    
+    //displaying the sorted array
+    cout<<"\n\nThe sorted array is:";
+    disp(arr,n);
+}
