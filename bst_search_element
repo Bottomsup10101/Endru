@@ -5,105 +5,160 @@
 
 #include <iostream>
 using namespace std;
-struct node
-{
+
+struct Node {
     int data;
-    node*left,*right;
+    Node* left;
+    Node* right;
 };
 
-class bst
-{
-    node*root;
-    public:
-    bst(){root=NULL;}
-    void create(int arr[],int N)
-    {
-     node *parent,*nn,*temp;
-     for(int i=0;i<N;i++)
-     {
-     nn=new node;
-     
-     if(nn==NULL)
-     {
-        cout<<"\nNo memory left....";
+Node* createNode(int value) {
+    Node* newNode = new Node();
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+Node* insert(Node* root, int value) {
+    if (root == NULL) {
+        return createNode(value);
+    }
+    if (value < root->data) {
+        root->left = insert(root->left, value);
+    } else if (value > root->data) {
+        root->right = insert(root->right, value);
+    }
+    return root;
+}
+
+Node* findMin(Node* root) {
+    while (root && root->left != NULL) {
+        root = root->left;
+    }
+    return root;
+}
+
+Node* deleteNode(Node* root, int value) {
+    if (root == NULL) {
+        return root;
+    }
+    if (value < root->data) {
+        root->left = deleteNode(root->left, value);
+    } else if (value > root->data) {
+        root->right = deleteNode(root->right, value);
+    } else {
+        if (root->left == NULL) {
+            Node* temp = root->right;
+            delete root;
+            return temp;
+        } else if (root->right == NULL) {
+            Node* temp = root->left;
+            delete root;
+            return temp;
+        }
+        Node* temp = findMin(root->right);
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
+    }
+    return root;
+}
+
+bool search(Node* root, int value) {
+    if (root == NULL) {
+        return false;
+    }
+    if (value == root->data) {
+        return true;
+    } else if (value < root->data) {
+        return search(root->left, value);
+    } else {
+        return search(root->right, value);
+    }
+}
+
+void preorderTraversal(Node* root) {
+    if (root == NULL) {
         return;
-     }
-     
-        //node formulation
-         nn->data=arr[i];
-         nn->left=NULL;
-         nn->right=NULL;
-         
-         if(root==NULL)
-         {
-             root=nn;
-             continue;
-         }
-        temp=root;
-         
-        //finding appropriate location of node
-        while(temp!=NULL)
-        {
-            parent=temp;
-            if(nn->data>temp->data)
-            {
-                temp=temp->right;
-            }
-            else
-            temp=temp->left;
-        }
-        
-        //put that data at it's correct location 
-        if(nn->data > parent->data)
-        {
-            parent->right=nn;
-        }
-        else
-        parent->left=nn;
     }
-     cout<<"\nThe specified Binary Search Tree is created ";
-    }
-    
-    void Fbst(int key)
-    {
-        node*temp=root;
-        //finding appropriate location of node
-        while(temp!=NULL && temp->data!=key)
-        {
-            if(temp->data>key)
-            {
-                temp=temp->left;
-            }
-            if(temp->data<key)
-            {
-            temp=temp->right;
-            }
-        }
-        if(temp==NULL)
-        {
-            cout<<"\nThe key not found";
-            return;
-        }
-        cout<<"\nThe key found";
-    }
-};
+    cout << root->data << " ";
+    preorderTraversal(root->left);
+    preorderTraversal(root->right);
+}
 
-int main()
-{
-    bst b;
-    int n;
-    cout<<"\nEnter the number of nodes you want to create in bst: ";
-    cin>>n;
-    int arr[n];
-    cout<<"\nEnter the data elements of bst respectively: ";
-    for(int i=0;i<n;i++)
-    {
-        cin>>arr[i];
+void inorderTraversal(Node* root) {
+    if (root == NULL) {
+        return;
     }
-    b.create(arr,n);
-    
-    int key;
-    cout<<"\nEnter the key you want to search in the given BST: ";
-    cin>>key;
-    b.Fbst(key);
+    inorderTraversal(root->left);
+    cout << root->data << " ";
+    inorderTraversal(root->right);
+}
+
+void postorderTraversal(Node* root) {
+    if (root == NULL) {
+        return;
+    }
+    postorderTraversal(root->left);
+    postorderTraversal(root->right);
+    cout << root->data << " ";
+}
+
+int main() {
+    Node* root = NULL;
+    int choice, value;
+    do {
+        cout << "\nMenu:\n";
+        cout << "1. Insert a Node\n";
+        cout << "2. Delete a Specified Node\n";
+        cout << "3. Search for an Element\n";
+        cout << "4. Preorder Traversal\n";
+        cout << "5. Inorder Traversal\n";
+        cout << "6. Postorder Traversal\n";
+        cout << "7. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        switch (choice) {
+            case 1:
+                cout << "Enter value to insert: ";
+                cin >> value;
+                root = insert(root, value);
+                break;
+            case 2:
+                cout << "Enter value to delete: ";
+                cin >> value;
+                root = deleteNode(root, value);
+                break;
+            case 3:
+                cout << "Enter value to search: ";
+                cin >> value;
+                if (search(root, value)) {
+                    cout << "Element " << value << " found in the tree.\n";
+                } else {
+                    cout << "Element " << value << " not found in the tree.\n";
+                }
+                break;
+            case 4:
+                cout << "Preorder Traversal: ";
+                preorderTraversal(root);
+                cout << endl;
+                break;
+            case 5:
+                cout << "Inorder Traversal: ";
+                inorderTraversal(root);
+                cout << endl;
+                break;
+            case 6:
+                cout << "Postorder Traversal: ";
+                postorderTraversal(root);
+                cout << endl;
+                break;
+            case 7:
+                cout << "Exiting the program.\n";
+                break;
+            default:
+                cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 7);
+    return 0;
 }
