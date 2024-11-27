@@ -2,150 +2,123 @@
     14 Write a C++ program to create a Binary Search Tree for N nodes, and implement non-
        recursive in-order tree traversal
 */
+/*
+    13 Write a C++ program to create a Binary Search Tree for N nodes, and implement non-
+       recursive pre-order tree traversal
+*/
 #include <iostream>
 using namespace std;
-const int size=100;
-struct node
-{
+
+const int siz = 100;
+
+struct node {
     int data;
-    node*left,*right;
+    node* left;
+    node* right;
 };
 
-//stack data structure used for storing and manipulation through address of each node
-class stack
-{
-    node*arr[size];//array storing address of each node
+class BST {
+    node* root;
+
+public:
+    BST(){root=NULL;}
+    
+    void create_BST();
+    void nr_pre() { nr_pre(root); }
+private:
+    void nr_pre(node* t);
+};
+
+class stack {
+    node* a[siz];
     int top;
-    public:
+
+public:
     stack(){top=-1;}
-    void push(node*t)
-    {
-        if(top!=size-1)
-        {
-            arr[++top]=t;
-        }
-    }
     
-    node* pop()
-    {
-        node*t;
-        if(top!=-1)
-        {
-            t=arr[top--];
-        }
-        return t;
+    bool empty() {
+        return top == -1;
     }
-    
-    int IsEmpty()
-    {
-        if(top==-1)
-        return 1;
-        else
-        return 0;
+
+
+
+    void push(node* t){
+        if(top!=siz-1)
+            a[++top]=t;
     }
+    node* pop() {
+    if (top != -1) 
+        return a[top--];
+     else 
+        return NULL; 
+}
+
 };
 
-class bst
-{
-    node*root;
-    public:
-    bst(){ root=NULL;}
-    
-    //declaring all function prototype
-      void create();
-      void disp();
-      void nr_ino(node*temp);
-};
 
-//defining create function
-void bst::create()
-{
-    int n;
-    cout<<"\nEnter the number of nodes you want to create in BST: ";
-    cin>>n;
-    node*temp,*parent,*nn;
-    temp=NULL;parent=NULL;
-    for(int i=0;i<n;i++)
-    {
-        nn=new node;
-        if(nn==NULL)
-        {
-            cout<<"\nNo Memory left in the system....";
-            cout<<"\nExiting the program";
-            return;
-        }
-        //taking data of node from user
-        cout<<"\nEnter the data for "<<i+1<<" node:";
-        cin>>nn->data;
-        nn->left=NULL;nn->right=NULL;
+
+void BST::nr_inorder(node* t) {
+    stack s1;
+    while (t != NULL) {
         
-        //creation of first node
-        if(i==0)
-        {
-            root=nn;
+        s1.push(t);
+        t = t->left;
+    }
+    while (!s1.empty()) {
+        t = s1.pop();
+        cout<<t->data<<" ";
+        t = t->right;
+        while (t != NULL) {
+            s1.push(t);
+            t = t->left;
+        }
+    }
+}
+void BST::create_BST() {
+    int n, i;
+    cout << "Enter No. of nodes: ";
+    cin >> n;
+
+    for (i = 0; i < n; i++) {
+        node* nn = new node;
+        if (!nn) {
+            cout << "Memory full" << endl;
+            exit(1); 
+        }
+        
+        cout << "Enter data: ";
+        cin >> nn->data;
+        nn->left = nn->right = NULL;
+
+        if (root == NULL) {
+            root = nn;
             continue;
         }
-        temp=root;
-        
-        //finding correct location for new node 
-        while(temp!=NULL)
-        {
-            parent=temp;
-            if(temp->data<nn->data)
-            {
-                temp=temp->right;
+
+        node* t = root;
+        node* parent = NULL;
+
+        while (t != NULL) {
+            parent = t;
+            if (nn->data < t->data) {
+                t = t->left;
+            } else {
+                t = t->right;
             }
-            else
-            temp=temp->left;
         }
-        
-        //checking whether in left or right of parent node
-        if(parent->data<nn->data)
-        {
-            parent->right=nn;
-        }
-        else
-        parent->left=nn;
-        
-    }
-}
 
-//non-recurrsive preorder traversal
-void bst::nr_ino(node*temp)
-{
-    stack s1;
-    // left root right
-    while(temp!=NULL)
-    {
-        s1.push(temp);
-        temp=temp->left;
-        
-    }
-    
-    while(!s1.IsEmpty())
-    {
-        temp=s1.pop();
-        cout<<temp->data<<" ";
-        temp=temp->right;
-        while(temp!=NULL)
-        {
-            s1.push(temp);
-            temp=temp->left;
+        if (nn->data < parent->data) {
+            parent->left = nn;
+        } else {
+            parent->right = nn;
         }
     }
-    
 }
-
-//Display function
-void bst::disp()
-{
-   cout<<"\nThe created BST displayed using non-recurrsive inorder traversal below:\n";
-   nr_ino(root);
-}
-
-int main()
-{
-   bst b;
-   b.create();
-   b.disp();
+int main() {
+    BST b1;
+    b1.create_BST();
+    cout << "In-order Traversal: ";
+    b1.nr_inorder();
+cout<<endl;
+return 0;
 }
